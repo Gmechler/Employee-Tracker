@@ -42,6 +42,7 @@ start = () => {
 };
 
 add = () => {
+  // ask what they want to add
   inquirer
     .prompt({
       name: "addWhat",
@@ -50,7 +51,7 @@ add = () => {
       choices: ["Department", "Role", "Employee", "Restart"]
     })
     .then(function(answer) {
-      switch (answer.postOrBid) {
+      switch (answer.addWhat) {
         case "Department":
           department_add();
           break;
@@ -70,8 +71,74 @@ add = () => {
     });
 };
 
-update = () => {};
-view = () => {};
+department_add = () => {};
+role_add = () => {};
+employee_add = () => {};
+
+update = () => {
+  inquirer
+    .prompt({
+      name: "updateWhat",
+      type: "list",
+      message: "What would you like to add?",
+      choices: ["Department", "Role", "Employee", "Restart"]
+    })
+    .then(function(answer) {
+      switch (answer.updateWhat) {
+        case "Department":
+          department_update();
+          break;
+
+        case "Role":
+          role_update();
+          break;
+
+        case "Employee":
+          employee_update();
+          break;
+
+        case "Restart":
+          start();
+          break;
+      }
+    });
+
+  department_update = () => {};
+  role_update = () => {};
+  employee_update = () => {};
+};
+view = () => {
+  inquirer
+    .prompt({
+      name: "viewWhat",
+      type: "list",
+      message: "What would you like to add?",
+      choices: ["Department", "Role", "Employee", "Restart"]
+    })
+    .then(function(answer) {
+      switch (answer.viewWhat) {
+        case "Department":
+          department_view();
+          break;
+
+        case "Role":
+          role_view();
+          break;
+
+        case "Employee":
+          employee_view();
+          break;
+
+        case "Restart":
+          start();
+          break;
+      }
+    });
+
+  department_view = () => {};
+  role_view = () => {};
+  employee_view = () => {};
+};
 
 // function createDepartment(function(err){
 //     if(err) throw err;
