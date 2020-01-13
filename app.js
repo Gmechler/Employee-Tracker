@@ -1,16 +1,18 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var cTable = require("console.table");
 
-var con = mysql.createConnection({
+var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
   password: "Tit2920ans!",
   database: "employees_db"
 });
-con.connect(function(err) {
+connection.connect(function(err) {
   if (err) throw err;
-  console.log("connected as id " + con.threadID + "\n");
+  console.log("connected as id " + connection.threadId);
+  start();
 });
 
 start = () => {
@@ -35,7 +37,7 @@ start = () => {
           view();
           break;
         case "Exit":
-          con.end();
+          connection.end();
           break;
       }
     });
@@ -70,8 +72,35 @@ add = () => {
       }
     });
 };
+// adds a new department
+department_add = () => {
+  inquirer
+    .prompt({
+      name: "departmentName",
+      type: "input",
+      message: "Enter the name of the new department",
+      // checks to see if the sting value is not empty
+      validate: function(value) {
+        if (value !== "") {
+          console.log("Department name cannot be blank");
+        }
+        return true;
+      }
+    })
+    .then(function(answer) {
+      connection.query(
+        "INSERT INTO departments SET ?",
+        {
+          name: answer.departmentName
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("New Department successfully added to the database.");
+        }
+      );
+    });
+};
 
-department_add = () => {};
 role_add = () => {};
 employee_add = () => {};
 

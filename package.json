@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/Gmechler/Employee-Tracker#readme",
   "dependencies": {
+    "console.table": "^0.10.0",
     "inquirer": "^7.0.3",
     "mysql": "^2.17.1"
-  }
+  },
+  "devDependencies": {}
 }
