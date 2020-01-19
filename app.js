@@ -105,28 +105,50 @@ department_add = () => {
 };
 
 role_add = () => {
-  inquirer
-    .prompt([
-      {
-        name: "roleTitle",
-        type: "input",
-        message: "What is the title of the new role?"
-      },
-      {
-        name: "roleSalary",
-        type: "input",
-        message: "What is the salary of the new role?"
-      }
-    ])
-    .then(function(answer) {
-      var newRole = { title: answer.roleTitle, salary: answer.roleSalary };
-      connection.query("INSERT INTO roles SET ?", newRole, function(err) {
-        if (err) throw err;
-        console.log(answer.roleTitle + " successfully added");
-        start();
+  connection.query("SELECT * FROM departments", function(err, res) {
+    if (err) throw err;
+
+    inquirer
+      .prompt([
+        {
+          name: "roleTitle",
+          type: "input",
+          message: "What is the title of the new role?"
+        },
+        {
+          name: "roleSalary",
+          type: "input",
+          message: "What is the salary of the new role?"
+        },
+        {
+          name: "roleDep",
+          type: "list",
+          Mesage: "What Department does this role work in?",
+          choices: function() {
+            var choicesArray = [];
+            for (var i = 0; i < res.length; i++)
+              choicesArray.push(res[i].id + "." + res[i].name);
+            return choicesArray;
+          }
+        }
+      ])
+      .then(function(answer) {
+        var roleDepId = answer.roleDep.split(".")[0];
+        console.log(roleDepId);
+        var newRole = {
+          title: answer.roleTitle,
+          salary: answer.roleSalary,
+          department_id: roleDepId
+        };
+        connection.query("INSERT INTO roles SET ?", newRole, function(err) {
+          if (err) throw err;
+          console.log(answer.roleTitle + " successfully added");
+          start();
+        });
       });
-    });
+  });
 };
+
 employee_add = () => {
   connection.query("SELECT * FROM roles", function(err, res) {
     if (err) throw err;
@@ -143,9 +165,9 @@ employee_add = () => {
           message: "What is the employees last name?"
         },
         {
-          name: "empDep",
+          name: "empRole",
           type: "list",
-          Mesage: "What Department does this employee work in?",
+          Mesage: "What role does this employee work in?",
           choices: function() {
             var choicesArray = [];
             for (var i = 0; i < res.length; i++)
@@ -155,9 +177,11 @@ employee_add = () => {
         }
       ])
       .then(function(answer) {
+        var empRoleId = answer.empRole.split(".")[0];
         var newEmp = {
           first_name: answer.empFirstName,
-          last_name: answer.empLastName
+          last_name: answer.empLastName,
+          role_id: empRoleId
         };
         connection.query("INSERT INTO employees SET ?", newEmp, function(err) {
           if (err) throw err;
@@ -252,12 +276,3 @@ view = () => {
     });
   };
 };
-
-// function createDepartment(function(err){
-//     if(err) throw err;
-//     console.log()
-// })
-
-// function updateDepartment(function(err){}
-// function deleteDepartment(function(err){}
-// function readDepartment(function(err){}
