@@ -228,7 +228,7 @@ department_update = () => {
         {
           name: "dep_ToUpdate",
           type: "list",
-          Mesage: "What Department does this role work in?",
+          Mesage: "What Department do you want to update?",
           choices: function() {
             var choicesArray = [];
             for (var i = 0; i < res.length; i++)
@@ -245,8 +245,6 @@ department_update = () => {
       .then(function(answer) {
         var dep_ToUpdate = answer.dep_ToUpdate.split(".")[1];
         var input = answer.dep_New;
-        console.log(input);
-        console.log(dep_ToUpdate);
         connection.query(
           "UPDATE employees_db.departments SET name = ? WHERE name = ?",
           [input, dep_ToUpdate],
@@ -262,8 +260,93 @@ department_update = () => {
   });
 };
 
-role_update = () => {};
-employee_update = () => {};
+role_update = () => {
+  connection.query("SELECT * FROM roles", function(err, res) {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: "role_ToUpdate",
+          type: "list",
+          Mesage: "What role do you want to update?",
+          choices: function() {
+            var choicesArray = [];
+            for (var i = 0; i < res.length; i++)
+              choicesArray.push(res[i].id + "." + res[i].title);
+            return choicesArray;
+          }
+        },
+        {
+          name: "role_New",
+          type: "input",
+          message: "What do you want to change the role to?"
+        }
+      ])
+      .then(function(answer) {
+        var role_ToUpdate = answer.role_ToUpdate.split(".")[1];
+        var input = answer.role_New;
+        connection.query(
+          "UPDATE employees_db.roles SET title = ? WHERE title = ?",
+          [input, role_ToUpdate],
+          function(err) {
+            if (err) throw err;
+            console.log(
+              answer.role_ToUpdate +
+                " successfully changed to " +
+                answer.role_New
+            );
+            start();
+          }
+        );
+      });
+  });
+};
+employee_update = () => {
+  connection.query("SELECT * FROM employees", function(err, res) {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: "employee_ToUpdate",
+          type: "list",
+          Mesage: "What employees name that you wan to update?",
+          choices: function() {
+            var choicesArray = [];
+            for (var i = 0; i < res.length; i++)
+              choicesArray.push(
+                res[i].id + "." + res[i].first_name + "." + res[i].last_name
+              );
+            return choicesArray;
+          }
+        },
+        {
+          name: "emp_New",
+          type: "input",
+          message: "What do you want to change the role to?"
+        }
+      ])
+      .then(function(answer) {
+        var id = answer.employee_ToUpdate.split(".")[0];
+        var first_name = answer.emp_New.split(" ")[0];
+        var last_name = answer.emp_New.split(" ")[1];
+
+        connection.query(
+          "UPDATE employees_db.employees SET first_name = ?, last_name = ? WHERE id = ?",
+          [first_name, last_name, id],
+          function(err) {
+            if (err) throw err;
+            console.log(
+              answer.employee_ToUpdate +
+                " successfully changed to " +
+                first_name +
+                last_name
+            );
+            start();
+          }
+        );
+      });
+  });
+};
 
 view = () => {
   inquirer
